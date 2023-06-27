@@ -9,11 +9,7 @@ def add_todo():
     with open("tasks.txt", 'a+') as file:
         file.write(todo_to_add + "\n")
 
-
 st.title("My Todo list")
-
-
-
 
 for index,todo in enumerate(obtained_todos):
     checkbox=st.checkbox(todo,key=todo)
