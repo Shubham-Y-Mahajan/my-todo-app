@@ -1,0 +1,5 @@
+com\bnp\controller\ProductController.class
+com\bnp\service\ProductService.class
+com\bnp\repository\ProductRepository.class
+com\bnp\entity\Product.class
+com\bnp\MainClass.class

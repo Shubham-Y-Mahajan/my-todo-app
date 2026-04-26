@@ -1,0 +1,763 @@
+Spring :
+
+-- Framework
+-- Lightweight
+-- Powerful Abstraction
+-- Declerative support (config file - xml, json, yaml,properties)
+
+J2EE -- Servlet + jsp +ejb(Enterprise Java Bean)
+
+Rod johnson
+
+Spring 1.0 March 2004  -- Interfaces
+
+Spring 2.5 -- REduced Aware Interface
+           -- XML config file
+
+Spring 3.0  -- REST support 
+            -- Java based configuration
+            -- SpEL(Spring Expression Language)
+
+Spring 4.0  -- Leverage Java 8 features
+            -- Spring Boot
+
+Spring 5.0  -- Cloud Support
+            -- Async Programming
+
+Spring 6.0    
+
+------------------------------
+Spring Modules
+Spring Core -- purpose -- to instantiate the class
+Spring Web  -- create we appln //er J2EE
+Spring Data
+Spring REST
+Spring AOP (Aspect Oriented Programming) -- support cross-cutting concerns
+
+---------------------------------
+
+Dependency Injection (DI) - Inject the instance created by the container into the Object created in the appln by the developer
+
+IoC --Inversion of Control -- using which DI is done
+
+---------------------------------
+2 Types of COntainer
+
+BeanFactory  -- Interface
+ApplicationContext -- Interface  - The root interface for accessing a Spring bean container.
+
+ApplicationContext extends BeanFactory
+
+5 classes which implements ApplicationContext
+1) ClassPathXmlApplicationContext
+2) FileSystemXmlApplicationContext
+3) XmlWebApplicationContext
+4) AbstractApplicationContext
+5) AnnotationConfigApplicationContext
+
+
+https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html
+
+
+https://docs.spring.io/spring-framework/docs/4.2.x/spring-framework-reference/html/xsd-configuration.html
+
+Dependency Injection:
+
+ <bean id="welcome" class="com.bnp.Welcome" />    new Welcome()
+
+Setter Injection
+
+
+ <bean id="car" class="com.bnp.setter.Car">
+    	<property name="name" value="Honda"/>        car.setName("Honda")
+    	<property name="model" value="City" />       car.setModel("City")
+    </bean>   
+    
+     <bean id="user" class="com.bnp.setter.User">
+    	<property name="userName" value="Priyanshu"/>
+    	<property name="car" ref="car" />
+    </bean>  
+
+
+Constructor Injection
+
+<bean id="car" class="com.bnp.setter.Car">              
+    	<constructor-arg name="name" value="Honda"/>           new Car("Honda","City");
+    	<constructor-arg name="model" value="City" />
+    </bean>   
+    
+     <bean id="user" class="com.bnp.setter.User">
+    	<constructor-arg name="userName" value="Atharva"/>
+    	<constructor-arg name="car" ref="car" />
+    </bean>   
+
+---------------------------------------
+
+Wiring
+
+Autowiring:
+byName
+byType
+
+public class User {
+	private String userName;
+	private Car car;
+
+
+     <bean id="user" class="com.bnp.setter.User" autowire="byType">
+    	<property name="userName" value="Chinmaya"/>
+    
+    </bean>  
+
+
+=============================================
+Field Injection
+@Autowired
+
+To make the annotations in ur appln to be recognized by the container,
+add  <context:annotation-config></context:annotation-config>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:annotation-config></context:annotation-config>
+
+public class User {
+	private String userName;
+	
+	@Autowired
+	private Car car;
+
+-------------------------
+
+3 Types of Spring Configuration
+
+1) XML-based configuration
+2) Annotation based config
+3) Java based Config
+
+-----------------------
+Component-scan
+
+@Component		-- Spring managed beans
+@Configuration 		-- Used for config files
+
+@Component
+public class Car {
+
+	@Value("BMW")
+	private String name;
+	@Value("M5")
+	private String model;
+
+
+
+@Component  
+public class User {
+	@Value("Priyanshu")
+	private String userName;
+	
+	@Autowired
+	private Car car;
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.bnp"></context:component-scan>
+     
+
+</beans>
+
+==================================
+Java based configuration
+
+package com.bnp.javaconfig;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AppConfig {
+
+	@Bean(name = "gs1")
+	public GreetingServiceImpl getGs1() {
+		GreetingServiceImpl gs = new GreetingServiceImpl();
+		gs.setGreeting("Good Afternoon");
+		return gs;
+	}
+
+	@Bean(name = "gs2")
+	public GreetingServiceImpl getGs2() {
+		GreetingServiceImpl gs = new GreetingServiceImpl("Good Evening");
+		return gs;
+	}
+}
+
+==========================
+Scope :
+
+By Default spring has  a scope called SINGLETON
+
+===============================
+SusAnnotations  of @Component  is @Repository, @Service, @Controller
+
+
+--------------------------
+LifeCycle methods of Spring bean:
+
+Can be done using
+1) Interface  -- InitializingBean(afterPropertiesSet()), DisposableBean(destroy())
+2) Annotations -- @PostConstruct, @PreDestroy
+
+========================================================
+
+Spring Boot Notes:
+
+It supports Jdk 8
+Has many production-ready features
+
+How to create a spring boot appln
+1)  web appl -- spring initializr(preferred)
+2) CLI
+
+
+Features
+1) Starter Dependencies (to avoid version conflict)
+2) Has Embeded tomcat server to deploy the appln. But developer will execute it as a stand-alone appln. Embedded Server
+3) AutoConfiguration
+4) NO XML Configuration
+5) Production-ready features for monitoring(Actuator)
+6) Auto Reload of appln
+=======================
+@SpringBootApplication  = @Configuration + @EnableAutoConfiguration + @ComponentScan
+
+
+===========================
+PMS:
+pom.xml
+<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+=======================
+
+application.properties
+
+https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+
+
+
+
+https://www.google.com/search?q=http+protocol&sca_esv=3087728c2f704245&udm=2&biw=1024&bih=492&sxsrf=ANbL-n4WJE3BXV8fE6aeGP-Zx2cKQ0YYmQ%3A1774500919448&ei=N7zEaff4GqeMseMP1qbR0Qk&oq=http+&gs_lp=Egtnd3Mtd2l6LWltZyIFaHR0cCAqAggAMg0QABiABBixAxhDGIoFMgoQABiABBhDGIoFMgoQABiABBhDGIoFMgoQABiABBhDGIoFMgoQABiABBhDGIoFMgoQABiABBhDGIoFMgoQABiABBhDGIoFMggQABiABBixAzILEAAYgAQYsQMYgwEyChAAGIAEGEMYigVI6g1QAFj6BXAAeACQAQCYAV6gAcwDqgEBNbgBA8gBAPgBAZgCBaAC5APCAgcQIxgnGMkCwgIFEAAYgATCAhAQABiABBixAxhDGIMBGIoFmAMAkgcBNaAH9xyyBwE1uAfkA8IHAzItNcgHEoAIAA&sclient=gws-wiz-img
+
+HTTP Methods:
+GET	: Read	  : select
+POST	: CREATE  : insert
+PUT	: Update  : update
+DELETE  : Delete  : delete
+
+=============================
+DTO : Data Transfer Object
+
+
+
+HTTP Status Code
+
+Informational responses (100 – 199)
+Successful responses (200 – 299)
+Redirection messages (300 – 399)
+Client error responses (400 – 499)
+Server error responses (500 – 599)
+
+
+====================================
+Spring Security
+
+https://docs.spring.io/spring-security/reference/servlet/architecture.html
+
+<dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+----------------------------------------
+Actuator:
+
+Spring Boot Actuator provides production-ready features to monitor and manage a running Spring Boot application using built-in endpoints.
+
+---------------------------------------
+K8 :
+
+POD:Smallest deployment unit which has one or more containers
+
+Service: Expose the pods through the ip address
+
+Volumn
+ -- PV -- Persistance Volume (available within the cluster)
+ -- PVC -- persistance volume claim(available outside the cluster)
+
+
+Config Map -- Text file to store all the configurations
+Secrets -- text file to store all the credentials in base 64 encoding format
+
+Deployment   -- template for the pods
+
+=========================================
+minikube start driver=docker
+
+C:\Users\eagle>minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+C:\Users\eagle>kubectl get nodes
+NAME       STATUS   ROLES           AGE     VERSION
+minikube   Ready    control-plane   2m15s   v1.35.1
+
+C:\Users\eagle>kubectl get pods
+No resources found in default namespace.
+
+C:\Users\eagle>kubectl get services
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   2m34s
+
+C:\Users\eagle>kubectl get svc
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   2m46s
+
+C:\Users\eagle>kubectl get deployments
+No resources found in default namespace.
+
+C:\Users\eagle>kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   4m6s
+kube-node-lease   Active   4m6s
+kube-public       Active   4m6s
+kube-system       Active   4m6s
+
+===================
+docker pull prameela25/ngnix
+kubectl run myngnix-pod --image=prameela25/ngnix
+
+C:\Users\eagle>kubectl get pods
+NAME          READY   STATUS    RESTARTS   AGE
+myngnix-pod   1/1     Running   0          22s
+
+kubectl describe pod myngnix-pod
+kubectl logs myngnix-pod
+kubectl delete pod myngnix-pod
+
+
+=====================================
+Types of Services:
+ClusterIP
+Nodeport
+LoadBalancer
+ExternalName
+
+=============================
+kubectl create deployment ngnix-deployment --image=prameela25/ngnix
+kubectl get pods
+kubectl describe pod ngnix-deployment-d649d5458-frgc6
+kubectl scale deployment ngnix-deployment --replicas=3
+
+kubectl get pods
+
+kubectl get svc
+kubectl expose deployment ngnix-deployment --port=87 --target-port=80 --type=NodePort
+kubectl get svc
+minikube ip
+
+minikube service ngnix-deployment     == Create the tunnel b/w host and pod
+
+
+To view the dashboard
+minikube addons enable metrics-server
+minikube dashboard
+
+===============================================
+
+
+
+
+
+
+
+====================================================
+Jenkins:
+
+ 
+Jenkins  -> Manage Jenkins  -> Credentials  -->Add Credentials --> Username with password --> 
+
+
+Jenkins  -> Manage Jenkins  -> Tools :
+
+Add JDK
+   name : Java17
+   C:\Program Files\Java\jdk-17
+
+Add Git
+   Name : Default
+   C:\Program Files\Git\bin\git.exe
+
+Add Maven:
+   Name : Maven
+   Maven_HOME : D:\apache-maven-3.9.14
+
+
+Add Plugins:
+
+
+Why Jenkins : To automate the CI/ CD process
+
+CI/CD stands for Continuous Integration and Continuous Delivery (or Deployment)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------
+
+Docker:
+
+--  Containerization Platform
+
+--  build, package and create images(read only template)
+-- Docker Engine  will run the images
+--  Running images are called containers
+    container contains applns, config file and runtime 
+
+VMs Vs Containers:
+  -- Vms has GuestOS, Containers do not
+
+==============================
+docker ps  -- to show all the running containers
+
+docker pull hello-world
+docker pull atlassian/hello-world:dev
+
+docker images
+docker run imagename/imageid  -- to create the container / to run the image
+
+docker rmi imagename/imageid
+
+docker rm containername/containerid
+
+Note: When the container is running , you cant delete the image
+
+docker run --name myhelloworld hello-world   --to name the container
+
+
+docker logs myhelloworld
+docker inspect myhelloworld  --details about the container in json format
+
+
+docker pull suryasivaraj/ngnix
+docker run --name myngnix -p 8087:80 suryasivaraj/ngnix
+
+Port Mapping  -- hostport:containerport
+
+
+http://localhost:8087/
+
+
+docker stop myngnix     -- to stop the container
+docker start myngnix    -- to start the container
+
+
+To create our image of our application, create Dockerfile
+
+A Dockerfile contains instructions that the Docker engine executes sequentially to build an image. Each instruction creates a new, read-only layer in the image
+
+D:\A Bnp5\dockertest>docker build -t java-app .
+
+
+docker-compose up   to run the docker-compose file. Ensure Dockerfile is also created and made available in the same location where docker-compose file is available
+
+====================================================================
+Kubernetes(k8)
+
+-- Tool for Container Orchestration
+
+Why k8?
+1) Self healing
+2) Auto Scaling
+3) Zero-downtime deployments 
+4) Load balancer
+5) config files and secrets managed.
+6) MIcroservices Appln support
+
+
+Should not use k8
+1) When u have small application
+2) Traffic is less
+
+minikube -- k8 platform
+
+https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download
+
+
+
+C:\Users\eagle>minikube start driver=docker
+
+C:\Users\eagle>minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+
+================================================
+minikube has 1 cluster(1 master node + 1 worker node)
+
+cluster  -- group of nodes
+node  -- physical machine / VM's
+
+Master Node a.k.a Control plane -- Manage the clusters and make decisions
+
+Master Node contains:
+1) API Server  -- Entry point for all the request hitting k8
+2) Controller- manager
+3) Scheduler
+4) etcd server -- Brain of K8 -- state info in key-value pair.
+
+Worker Node Contains:
+
+1) POD -- Smallest Deployable Unit which has one or more containers
+2) Container Runtime  : Docker engine
+3) Kubelet  -- monitor the pods and give info to the control plane
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+docker build -t pms-app:latest .
+minikube image load pms-app:latest
+kubectl apply -f k8s
+kubectl get pods
+
+minikube service pms-service --url
+
+
+========================================================
+Create the job and paste this pipeline script:
+
+pipeline {
+    agent any 
+    tools {
+	jdk  'Java17'
+        maven 'Maven'
+    }
+    stages {
+        stage('checkout from git hub') { // A logical section of the pipeline
+            steps {
+                
+                echo 'Pull application from github'
+		git branch: 'main', credentialsId: 'gitcred', url: 'https://github.com/chnt/bnp5.git'
+
+            }
+        }
+        stage('build the project') {
+            steps {
+                echo 'create jar file using maven'
+                bat 'mvn clean package' 
+            }
+        }
+        stage('Build the Docker Image') {
+            steps {
+                echo 'Build the Docker Image for SB application...'
+                bat 'docker build -t pms-app:latest .'
+            }
+        }
+
+       stage('Start the minikube') {
+            steps {
+		echo 'Deleting Minikube'
+		bat 'minikube delete'
+                echo 'Starting Minikube'
+		bat 'minikube start'
+                
+            }
+        }
+        stage('Load the image to  minikube') {
+            steps {
+                echo 'Load the image to  minikube'
+                bat 'minikube image load pms-app:latest'
+            }
+        }
+        stage('Deploy the appln to k8') {
+            steps {
+                echo 'Deploy the appln to k8'
+		bat 'kubectl apply -f k8s/'
+
+		echo 'checking pods'
+		bat 'kubectl get pods'
+
+		echo 'checking services'
+		bat 'kubectl get svc'
+                
+            }
+        }
+	stage('Wait for the pods to be ready') {
+            steps {
+                echo 'Load the image to  minikube'
+                bat 'kubectl wait --for=condition=Ready pods --all --timeout=180s'
+            }
+        }
+
+	stage('Access the application') {
+            steps {
+                echo 'Accessing the URL'
+                bat 'minikube service pms-service --url'
+            }
+        }
+    }
+    post { 
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
+
+=================================================
+
+eagle@DESKTOP-OOGI82A MINGW64 /d/A Bnp5/sprbootbnp
+$ git init
+Initialized empty Git repository in D:/A Bnp5/sprbootbnp/.git/
+
+eagle@DESKTOP-OOGI82A MINGW64 /d/A Bnp5/sprbootbnp (master)
+$ git branch -M main
+
+eagle@DESKTOP-OOGI82A MINGW64 /d/A Bnp5/sprbootbnp (main)
+$ git remote add origin https://github.com/chntra/bnp5.git
+
+eagle@DESKTOP-OOGI82A MINGW64 /d/A Bnp5/sprbootbnp (main)
+$ git status
+On branch main
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        .gitattributes
+        .gitignore
+        .mvn/
+        Dockerfile
+        docker-compose.yaml
+        k8s/
+        mvnw
+        mvnw.cmd
+        pom.xml
+        src/
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+eagle@DESKTOP-OOGI82A MINGW64 /d/A Bnp5/sprbootbnp (main)
+$ git add .
+eagle@DESKTOP-OOGI82A MINGW64 /d/A Bnp5/sprbootbnp (main)
+$ git commit -m "First Commit for BNP5"
+eagle@DESKTOP-OOGI82A MINGW64 /d/A Bnp5/sprbootbnp (main)
+$ git push -u origin main
+
+=====================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+

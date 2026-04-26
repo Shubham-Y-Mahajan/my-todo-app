@@ -1,0 +1,200 @@
+OOPS:
+
+Object / ref.variable -- placeholder for instance
+instance -- reference / memory address
+
+Class -- A blueprint / template/mould  of an object
+         variable(state,properties) / methods(functionality/behaviour)
+
+Inheritance  -- derive the base class prop & methods to the child class
+Polymorphism -- multiple forms of object w.r.t. behaviour
+
+Encapsulation -- Data hidding(Access specifier - public, private, protected, default/package access)
+Abstraction -- Show what , hide how
+
+======================
+Naming Convention : Camel Case Convention
+
+class -- MyClass
+variable - myVariale
+method - myMehtod
+package - mypack
+contants -- MYCONSTANT
+object  -- myClass
+Interface - MyInterface
+Enums  -- MyEnum
+
+--------------
+Variable:
+  
+Types of variba
+1) Local -- within the method
+2) Instance -- within the class
+3) Class   --within the class
+
+Datatypes:
+
+value type
+   USerDef  -- enum, sturct(NOT supported by java)
+   predefined  -- 8 -int, long, float, double, boolean, char, short, long
+
+Ref type
+    USerDef -- class, array, interface
+   predefined -- String, Object(Supermost class in java) 
+
+
+Constr created by JVM  -- default constructor..
+------------------------------------
+MVC 
+
+IO Streams:
+------------
+
+Memeory
+File
+harddisk
+process
+appln
+
+Direction of data:
+InputStream  -- data getting inside the pgm(read)
+Output Stream  -- data coming out from the appln (write)
+
+Type of data:
+1) Byte Stream -- read and write happens in binary(InputStream , Output Stream)
+2) Character Stream -- read and write happens in text(Reader, Writer)
+
+
+Exception Handing:
+
+1) Checked Exception  -- can be checked by the compiler
+2) Unchecked Exception -- Cannt be checked by the compiler
+
+java.lang.Throwable has 2 subclasses  Error, Exception
+
+Exception -- Cant be rectified but can be handled
+
+Error -- Cant be rectified cannt be handled
+
+handle the exception
+try	-- block -- risky code
+catch   -- block  -- handler block
+finally -- block -- closure block
+throw   -- keyword -- 
+throws  -- keyword -- declaring the exception
+
+============================
+Inheritance:
+
+Types of relationship:
+1) IS-A r/s   -- parent & child r/s
+2) HAS-A r/s  -- Composition
+
+Car
+{
+wheel
+
+Seat
+
+Stearing
+}
+
+BMW extends Car{
+
+
+}
+
+===================================
+
+Polymorphism:
+
+1) Static Polymorphism / compile-time / Overloading
+2) Dynamic Polymorphism / Runtime / Overridding
+
+
+Overloading
+
+same method name different set of parameter
+
+Type of OL
+1) Constructor OL
+2) Mehtod OL
+3) Operator OL(NOT supported by Java)
+
+1) No.of parameter shd change
+2) Datatype of the parameter shd change
+3) seq of passing the parameter shd change
+
+FOR OL , NO need of inheritance as it is done within the same class
+
+
+Overridding
+
+same method name same set of parameter
+Inheritance is mandatory (IS-A r/s shd be satisfied)
+
+-----------------------------------------------
+Interface -- way of implementing Abstraction
+
+interface Calculate{
+
+   public void add(int a, int b);
+   public void sub();
+}
+
+class CalculateImpl implements Calculate{
+	 public void add(int a, int b){
+		s.o.p(a+b);
+         }
+         public void sub(){}
+
+	main(){
+	CalculateImpl  cl =  new CalculateImpl();
+	cl.add(12,12);
+	}
+}
+
+
+c= a+b
+
+Lambda Expression: A func, represented as Expression. To reduce the boiler plate code
+
+() -> {}
+ public void add(int a, int b){
+		s.o.p(a+b);
+         }
+
+ FI c =(int a, int b) ->  {
+		s.o.p(a+b);
+                  .....
+         }
+   c.add(12,12);
+
+Functional Interface : Interface with single abstract method(SAM)
+
+
+Default and Static Methods: The method within the interface which has implementation
+
+
+public void perform(List pr){
+	System.out.println(pr)
+}
+
+ProductOperation   ops=(pr) -> System.out.println(pr)
+
+ops::perform
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1556 @@
+j2ee -- web appln  -- servlet +jsp +ejb
+
+Rod Johnson
+Spring: Framework  -- Light weight  -- consumes less resources
+by executing the code in JVM(container -- Spl. JVM)
+
+Interface:  Loosely coupled  
+-- Abstraction  
+-- Declarative Support(xml, properties, json,yaml)
+
+Spring 1.0 -- Interface
+
+Spring 2.5  -- Simplified XML configuration, AspectJ integration
+
+Spring 3.0   -- REST Support   -- JDK 5+
+                Java based (using annotation) configuration
+		Validation
+		spel
+
+Spring 4.0   -- Spring boot -- Java 8+ 
+
+Spring 5.0  -- Cloud Feature, reactive programming support  -- Java 17+
+
+Spring 6.0   -- javax package changed to Jakarta EE -- Java 17+
+
+Spring 7.0  -- Java 25
+
+
+----------------------
+Spring Architecture:
+
+Modules in Spring:
+
+Spring Core  -- to instantiate the class using container
+Spring Web  -- similar to j2ee -- to create web appln
+Spring Data -- related to DB
+Spring REST -- Expose the we functionlity to other appln
+Spring AOP  -- Aspect Oriented Programming  -- cross-cutting concerns
+Spring Test
+
+-----------------------------
+
+Dependency Injection  -- Inject the instance created by the container whenever it is required in the application
+
+Inversion of Control --using which DI is done 
+
+-----------------------------
+
+2 Types of Container
+Built-in Containers
+1) BeanFactory   --Interface 
+2) ApplicationContext  - Interface
+
+ApplicationContext extends BeanFactory
+
+----------------------------------------
+Classes that implements ApplicationContext
+
+1) ClassPathXmlApplicationContext
+2) FileSystemXmlApplicationContext,
+3) XmlWebApplicationContext
+4) AbstractApplicationContext
+5) AnnotationConfigApplicationContext
+
+---------------------------------------------
+Dependency Injection
+
+https://docs.spring.io/spring-framework/docs/4.2.x/spring-framework-reference/html/xsd-configuration.html
+
+ <bean id="welcm" class="com.bnp.Welcome" />  <---->  new Welcome();
+
+Demo1:
+
+package com.bnp;
+
+public class Welcome {
+	public String sayHello() {
+		return "Hello All";
+	}
+}
+
+welcome.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="welcm" class="com.bnp.Welcome" />
+
+</beans>
+
+package com.bnp;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class MainClass {
+
+	public static void main(String[] args) {
+		
+		ApplicationContext context  = new ClassPathXmlApplicationContext("welcome.xml");
+		Welcome wel = (Welcome) context.getBean("welcm") ;   // DI
+		System.out.println(wel.sayHello());
+
+	}
+
+}
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.bnp</groupId>
+	<artifactId>springcoredemo</artifactId>
+	<version>1.0</version>
+
+	<dependencies>
+		<!-- Source:
+		https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>5.1.20.RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- Source:
+		https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.1.20.RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+</project>
+
+===================================
+
+Setter Injection:
+
+<bean id="car" class="com.bnp.setter.Car">      Car car = new Car();
+		<property name="name" value="BMW" />  car.setName("BMW");
+		<property name="model" value="M3" />  car.setModel("M3");
+	</bean>
+
+------------------
+package com.bnp.setter;
+
+public class Car {
+
+	private String name;
+	private String model;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	@Override
+	public String toString() {
+		return "Car [name=" + name + ", model=" + model + "]";
+	}
+
+}
+package com.bnp.setter;
+
+public class User {
+
+	private String userName;
+	private Car car;
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		System.out.println("From setUserName()" + userName);
+		this.userName = userName;
+	}
+
+	public Car getCar() {
+		return car;
+	}
+
+	public void setCar(Car car) {
+		this.car = car;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userName=" + userName + ", car=" + car + "]";
+	}
+
+}
+
+setter.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="car" class="com.bnp.setter.Car">
+		<property name="name" value="BMW" />
+		<property name="model" value="M3" />
+	</bean>
+
+	<bean id="user" class="com.bnp.setter.User">
+		<property name="userName" value="Ayush" />
+		<property name="car" ref="car" />
+	</bean>
+
+</beans>
+
+
+package com.bnp.setter;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SetterMainClass {
+
+	public static void main(String[] args) {
+		ApplicationContext context  = new ClassPathXmlApplicationContext("setter.xml");
+		User user = (User)context.getBean("user");
+		System.out.println(user.getUserName()+ " has " + user.getCar().getName()+" " + user.getCar().getModel());
+
+	}
+
+}
+
+
+---------------------------------------------------------
+Constructor Injection:
+
+package com.bnp.setter;
+
+public class Car {
+
+	private String name;
+	private String model;
+	
+	
+	//add this
+	public Car() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	//add this
+	public Car(String name, String model) {
+		
+		super();
+		this.name = name;
+		this.model = model;
+		System.out.println("From Car Constructr  -" + name + " -- " + model);
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	@Override
+	public String toString() {
+		return "Car [name=" + name + ", model=" + model + "]";
+	}
+
+}
+
+
+package com.bnp.setter;
+
+public class User {
+
+	private String userName;
+	private Car car;
+	//add this
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	//add this
+	public User(String userName, Car car) {
+		super();
+		this.userName = userName;
+		this.car = car;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		System.out.println("From setUserName()" + userName);
+		this.userName = userName;
+	}
+
+	public Car getCar() {
+		return car;
+	}
+
+	public void setCar(Car car) {
+		this.car = car;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userName=" + userName + ", car=" + car + "]";
+	}
+
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="car" class="com.bnp.setter.Car">
+		<constructor-arg name="name" value="BMW" />   -- change here to constructor-arg
+		<constructor-arg name="model" value="X4" />   -- change here
+	</bean>
+
+	<bean id="user" class="com.bnp.setter.User">
+		<constructor-arg name="userName" value="Yash" />   -- change here
+		<constructor-arg name="car" ref="car" />	   -- change here
+	</bean>
+
+</beans>
+
+
+package com.bnp.setter;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SetterMainClass {
+
+	public static void main(String[] args) {
+		ApplicationContext context  = new ClassPathXmlApplicationContext("setter.xml");
+		User user = (User)context.getBean("user");
+		System.out.println(user.getUserName()+ " has " + user.getCar().getName()+" " + user.getCar().getModel());
+
+	}
+
+}
+
+================================================
+Autowiring
+
+1) <constructor-arg name="car" ref="car" />    -- using ref keyword
+2) <bean id="user" class="com.bnp.setter.User" autowire="byType">   -- using autowire attribute
+
+3) @Autowired -- using Annotation
+
+
+2 types of Autowiring
+
+1) byName
+2) byType
+3) Constructor
+
+--------------------------------------
+package com.bnp.setter;
+
+public class Car {
+
+	private String name;
+	private String model;
+	
+
+	public Car() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	
+	public Car(String name, String model) {
+		
+		super();
+		this.name = name;
+		this.model = model;
+		System.out.println("From Car Constructr  -" + name + " -- " + model);
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	@Override
+	public String toString() {
+		return "Car [name=" + name + ", model=" + model + "]";
+	}
+
+}
+package com.bnp.setter;
+
+public class User {
+
+	private String userName;
+	private Car car;
+
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public User(String userName, Car car) {
+		super();
+		this.userName = userName;
+		this.car = car;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		System.out.println("From setUserName()" + userName);
+		this.userName = userName;
+	}
+
+	public Car getCar() {
+		return car;
+	}
+
+	public void setCar(Car car) {
+		this.car = car;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userName=" + userName + ", car=" + car + "]";
+	}
+
+}
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="carr" class="com.bnp.setter.Car">
+		<property name="name" value="BMW" />
+		<property name="model" value="X5" />
+	</bean>
+
+	<bean id="user" class="com.bnp.setter.User" autowire="byType">   -- change here
+		<property name="userName" value="Yash" />
+		
+	</bean>
+
+</beans>
+
+package com.bnp.setter;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SetterMainClass {
+
+	public static void main(String[] args) {
+		ApplicationContext context  = new ClassPathXmlApplicationContext("setter.xml");
+		User user = (User)context.getBean("user");
+		System.out.println(user.getUserName()+ " has " + user.getCar().getName()+" " + user.getCar().getModel());
+
+	}
+
+}
+
+----------------------------------------------------------------
+TO recognize the annoatation  use
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- bean definitions here -->
+
+	<context:annotation-config></context:annotation-config>
+
+
+-----------------
+Autowire using Annotation
+
+package com.bnp.setter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class User {
+
+	private String userName;
+
+	@Autowired	// Add this
+	private Car car;
+
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public User(String userName, Car car) {
+		super();
+		this.userName = userName;
+		this.car = car;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		System.out.println("From setUserName()" + userName);
+		this.userName = userName;
+	}
+
+	public Car getCar() {
+		return car;
+	}
+
+	public void setCar(Car car) {
+		this.car = car;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userName=" + userName + ", car=" + car + "]";
+	}
+
+}
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- bean definitions here -->
+
+	<context:annotation-config></context:annotation-config>    // Add this
+	<bean id="car" class="com.bnp.setter.Car">
+		<property name="name" value="Hundai" />
+		<property name="model" value="i10" />
+	</bean>
+
+	<bean id="user" class="com.bnp.setter.User">
+		<property name="userName" value="Nithisha" />
+		
+	</bean>
+
+</beans>
+
+----------------------------------------------------------------
+
+Field Injection
+
+import org.springframework.beans.factory.annotation.Value;
+
+public class Car {
+
+	@Value("Honda")
+	private String name;
+	
+	@Value("City")
+	private String model;
+
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+public class User {
+
+	@Value("Sushma")
+	private String userName;
+
+	@Autowired
+	private Car car;
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- bean definitions here -->
+
+	<context:annotation-config></context:annotation-config>
+	<bean id="car" class="com.bnp.setter.Car">
+		
+	</bean>
+
+	<bean id="user" class="com.bnp.setter.User">
+		
+		
+	</bean>
+
+</beans>
+
+====================================
+@Configuration  Vs @Component
+
+used to create the bean(instance) of the class which is annotated
+
+
+@Component  -- Spring Managed Beans
+
+@Configuration  -- expect someother instance of diff. beans out this configuration file
+
+--------------------------
+
+import org.springframework.stereotype.Component;
+		
+@Component			//add this
+public class Car {
+
+	@Value("Honda")
+	private String name;
+	
+	@Value("City 2")
+	private String model;
+
+
+import org.springframework.stereotype.Component;
+
+@Component		// Add this
+public class User {
+
+	@Value("Surya")
+	private String userName;
+
+	@Autowired
+	private Car car;
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- bean definitions here -->
+
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.bnp"></context:component-scan>
+
+	// remove bean tags and add componentscan tag
+
+</beans>
+
+
+======================================
+Lifecycle methods of Bean 
+
+1) Interface -- InitializingBean  -- afterPropertiesSet(), 
+                DisposableBean   -- destroy()
+2) Annotation
+
+---------------
+package com.bnp.lc.xml;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class College implements InitializingBean, DisposableBean {
+	private int id;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return "College [id=" + id + "]";
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		System.out.println("After Properties Set called");
+		
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		
+		System.out.println("Destroy() called");
+	}
+
+}
+
+package com.bnp.lc.xml;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class LcXmlMainClass {
+
+	public static void main(String[] args) {
+		AbstractApplicationContext context  = new ClassPathXmlApplicationContext("spr-lc-xml.xml");
+		
+		College c = (College)context.getBean("college");
+		System.out.println(c.getId());
+		
+		context.registerShutdownHook();
+	}
+
+}
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- bean definitions here -->
+
+	<bean id="college" class="com.bnp.lc.xml.College">
+		<property name="id" value="500"></property>
+	</bean>
+
+</beans>
+
+=====================================
+LC using Annotations:
+
+<!-- Source: https://mvnrepository.com/artifact/javax.annotation/jsr250-api -->
+<dependency>
+    <groupId>javax.annotation</groupId>
+    <artifactId>jsr250-api</artifactId>
+    <version>1.0</version>
+    <scope>compile</scope>
+</dependency>
+
+package com.bnp.lc.xml;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class College {
+	private int id;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return "College [id=" + id + "]";
+	}
+
+	@PostConstruct	// Add this
+	public void hi() {
+		System.out.println("hi hi hi");
+	}
+	
+	@PreDestroy	//Add this
+	public void bye() {
+		System.out.println("Bye bye bye");
+	}
+
+}
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- bean definitions here -->
+	<context:annotation-config></context:annotation-config>   // Add this
+
+	<bean id="college" class="com.bnp.lc.xml.College">
+		<property name="id" value="500"></property>
+	</bean>
+
+</beans>
+
+===========================================
+
+
+@Component -- Types of Component-- @Service, @Repository, @Controller
+
+
+---------------------------------
+Default Scope in Spring APplication is Singleton -- ONly one instance will be made 
+available for the entire application
+
+Opp of Singleton  -- Prototype
+
+----------------------------------------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.bnp</groupId>
+	<artifactId>springcore</artifactId>
+	<version>1.0</version>
+
+	<dependencies>
+		<!-- Source:
+		https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>6.1.20</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.14.1</version>
+				<configuration>
+					<source>17</source>
+					<target>17</target>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+</project>
+
+package com.bnp.model;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Product {
+
+	private int pid;
+	private String pname;
+
+	public Product() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Product(int pid, String pname) {
+		super();
+		this.pid = pid;
+		this.pname = pname;
+	}
+
+	public int getPid() {
+		return pid;
+	}
+
+	public void setPid(int pid) {
+		this.pid = pid;
+	}
+
+	public String getPname() {
+		return pname;
+	}
+
+	public void setPname(String pname) {
+		this.pname = pname;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [pid=" + pid + ", pname=" + pname + "]";
+	}
+
+}
+package com.bnp.repository;
+
+import org.springframework.stereotype.Repository;
+
+import com.bnp.model.Product;
+
+@Repository
+public class ProductRepository {
+	public Product getProduct() {
+		Product p = new Product();
+		p.setPid(200);
+		p.setPname("AC");
+		return p;
+	}
+}
+package com.bnp.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
+import com.bnp.model.Product;
+import com.bnp.repository.ProductRepository;
+
+@Service
+public class ProductService {
+	
+	@Autowired
+	private ProductRepository productRepository;
+	
+	@Autowired
+	@Qualifier("festivalDiscount")
+	@Lazy
+	private DiscountService discountService;
+	
+	public Product fetchProduct() {
+		Product prod = productRepository.getProduct();
+		discountService.applyDiscount();
+		return prod;
+	}
+	
+	
+
+}
+package com.bnp.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.bnp.model.Product;
+import com.bnp.service.ProductService;
+
+@Controller
+@Scope("singleton")
+public class ProductController {
+	
+	@Autowired
+	private ProductService productService;
+	
+	
+	public void displayProduct() {
+		Product product = productService.fetchProduct();
+		System.out.println(product);
+	}
+
+}
+package com.bnp;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.bnp.config.AppConfig;
+import com.bnp.controller.ProductController;
+
+public class MainApp {
+
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext  context = new AnnotationConfigApplicationContext();
+		
+		context.register(AppConfig.class);
+		context.refresh();
+
+		ProductController cont1 = context.getBean(ProductController.class);
+		System.out.println(cont1.hashCode());
+		
+		
+		
+		
+		ProductController cont2 = context.getBean(ProductController.class);
+		System.out.println(cont2.hashCode());
+		
+		cont1.displayProduct();
+		cont2.displayProduct();
+		context.close();
+		
+	}
+
+}
+package com.bnp.service;
+
+public interface DiscountService {
+	void applyDiscount();
+}
+package com.bnp.service;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
+@Service
+//@Primary
+public class RegularDiscount implements DiscountService{
+
+	@Override
+	public void applyDiscount() {
+		System.out.println("Regular Discount applied : 5%" );
+		
+	}
+
+}
+package com.bnp.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class FestivalDiscount implements DiscountService {
+
+	@Override
+	public void applyDiscount() {
+		System.out.println("Festival Discount applied : 25%");
+
+	}
+
+}
+
+
+============================================
+
+Spring Boot: 
+
+1) Starter Dependencies -- bundle of predefined dependencies(jar) without version conflict
+2) Embedded Tomcat Server
+3) Developer run this sb app as a StandAlone application
+4) Production Ready Features  -- Actuator(monitor appln in production)
+5) AutoConfiguration  -- No need of Manual XML / complex set up of your application
+
+------------------------------------------------------
+
+Web Service:
+
+API's  -- URL which supports http
+
+https://start.spring.io/
+REpresentational State Transfer (REST)--architectural style
+
+A REST API (Representational State Transfer API) enables communication between 
+client and server over HTTP
+
+
+SOAP -- Protocol - Simple Object Access Protocol (SOAP) is an XML-based messaging protocol for exchanging structured data between systems over networks, commonly using HTTP or SMTP
+
+HTTP based methods:
+
+GET  -- READ	-- select
+POST --  Create -- insert
+PUT  -- Update  -- update
+DELETE -- Delete-- Delete
+
+REST transfer data in the form of JSON(JavaScript Object Notation)
+
+{
+    "pid":112,
+    "pname":"TV"
+
+}
+
+----------------------------------
+@SpringBootApplication  -- @Configuration + @ComponentScan + @EnableAutoConfiguration
+
+
+--------------------------------------
+Common Application Properties in springboot
+
+https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+
+
+Swagger:
+<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
+http://localhost:8082/swagger-ui/index.html
+
+--------------------------------------
+Data Transfer Object : DTO
+
+
+------------------------------------------
+
+Spring Security:
+
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+
+401 Unauthorized: Authentication is required.
+403 Forbidden: Access to the resource is denied.
+
+
+
+Spring Security's architecture is based on Servlet filters that intercept incoming HTTP requests and apply a series of security checks before the request reaches the application's controller.
+
+-----------------------------------------------------------------
+Profiles in Spring Boot
+
+package com.bnp.profiledemo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ProfiledemoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ProfiledemoApplication.class, args);
+	}
+
+}
+
+package com.bnp.profiledemo;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ProfileController {
+
+    @Value("${app.message}")
+    private String message;
+
+    @GetMapping("/profile")
+    public String getMessage() {
+        return message;
+    }
+}
+
+
+application.properties
+
+spring.application.name=profiledemo
+
+spring.profiles.active=prod
+-------------
+application-dev.properties
+
+spring.application.name=profiledemo
+server.port=8081
+app.message=Running in DEV environment
+
+
+--------------
+application-prod.properties
+
+spring.application.name=profiledemo
+server.port=8084
+app.message=Running in PROD environment
+
+
+TO RUn
+localhost:8081/profile    -- Dev env
+localhost:8084/profile    -- Prod env
+
+
+
+
+
+
+-----------------------------------------------------------------
+Actuator:  Production ready features
+
+<dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+management.endpoint.metrics.enabled=true
+management.endpoints.web.exposure.include=*
+
+=======================================================================
+
+Docker:
+
+A platform for creating containers and to manage it
+
+Container:
+
+
+VM  & Containers
+containers contains Only applin + config files + dependencies
+VM contains applin + config files + dependencies  + OS
+
+Docker Terminilogies
+
+Docker host  -- physical machine
+Docker Image  -- read only template
+Docker Container -- Running Image
+
+Docker Deamon  --  Background process which accepts request to the container
+Docker Registry   -- repository of images
+
+Docker Client  -- CLI to execute docker commands
+
+----------------------------------------
+Devops
+
+--------------------------------------------
+
+docker login
+docker logout
+
+docker images
+docker pull imagename  -- to download the image from registery to local m/c
+
+docker run imagename/imageid  -- to create the container / run the image
+docker run --name <containername> imagename/imageid
+
+docker rm containername / containerid  - to remove the container
+docker rmi imagename / imageid -- to remove the image
+
+docker start containername / containerid
+docker stop containername / containerid
+
+docker logs containername / containerid  -- to see the result of started containers
+
+Port mapping:
+
+docker run --name myngix1  -p 8090:80 usz17/ngnix:2
+
+hostport:containerport
+
+=============================================
+
+Docker Compose -- Multi container management tool  -- Orchestration
+
+
+==========================================================
+Kubernetes (k8):
+
+Tool for Container Orchestration
+
+Why k8?
+1) Self-Healing
+2) Auto Scaling
+3) Zero-downtime deployments
+4) Load Balancer
+5) Secrets & config files management
+6) Microservice Appln support
+
+-------------------------------------
+minikube
+https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download
+
+minikube start
+minikube status
+
+C:\Users\eagle>minikube start
+* minikube v1.38.1 on Microsoft Windows 10 Home Single Language 22H2
+* Automatically selected the docker driver
+! Starting v1.39.0, minikube will default to "containerd" container runtime. See #21973 for more info.
+* Using Docker Desktop driver with root privileges
+* Starting "minikube" primary control-plane node in "minikube" cluster
+* Pulling base image v0.0.50 ...
+* Downloading Kubernetes v1.35.1 preload ...
+    > preloaded-images-k8s-v18-v1...:  272.45 MiB / 272.45 MiB  100.00% 9.68 Mi
+    > gcr.io/k8s-minikube/kicbase...:  519.58 MiB / 519.58 MiB  100.00% 7.09 Mi
+* Creating docker container (CPUs=2, Memory=4000MB) ...
+* Preparing Kubernetes v1.35.1 on Docker 29.2.1 ...
+* Configuring bridge CNI (Container Networking Interface) ...
+* Verifying Kubernetes components...
+  - Using image gcr.io/k8s-minikube/storage-provisioner:v5
+* Enabled addons: storage-provisioner, default-storageclass
+* Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+
+C:\Users\eagle>minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+
+============================================================
+minikube has 1 cluster(1 master node + 1 worker node)
+
+Cluster : group of nodes
+Node -- It is a physical machine/ VM which runs the container
+Master Node a.k.a -- Control Plane -- Manage the clusters and make decisions
+
+Mater node components:
+
+1) Apiserver : Entrypoint for all k8 request
+2) Controller Manager -- Manage  the current pods/ states of the pods
+3) Scheduler  --
+4) etcd server -- Brain of k8 -- state info is stored as a  key-value pair 
+
+Worker node objects
+
+1) POD : Smallest deployable unit which has one or more containers
+2) Container : Running Image
+3) Container Runtime : Docker Engine
+Kubelet  -- monitor the pods and give info to the control plane
+
+=======================================
+
+Pod: Smallest deployable unit which has one or more containers
+service -- Expose  the pods through the ip
+
+External Service : External to the cluster(optional)
+Ingress : Accept http request and pas it to the service
+
+PV  : Persistant Volumn( available within the cluster)
+PVC : Persistance Volumn Claim(available outside the cluster)
+
+Configmap  -- text file to store and configure all the configuration of the appln
+Secrets  -- text file to store all the credentials in base 64 encoding format
+
+ReplicaSets -- backup of your pods
+======================================================
+kubectl cluster-info
+
+we can create pod, node, namespaces , deployments, service
+
+operations done: create, delete, get, describe
+
+kubectl get nodes
+kubectl get pods
+kubectl get services 
+kubectl get svc
+
+kubectl get namespaces
+kubectl get deployments
+==================
+
+docker pull usz17/ngnix:2
+kubectl run myngnix-pod --image=usz17/ngnix:2
+
+C:\Users\eagle>kubectl get pods
+NAME          READY   STATUS    RESTARTS   AGE
+myngnix-pod   1/1     Running   0          27s
+
+kubectl describe pod myngnix-pod
+kubectl logs myngnix-pod
+kubectl delete pod  myngnix-pod
+
+===========================
+
+
+
+Types of services
+Kubernetes defines four primary service types to abstract how a set of Pods is exposed to the network.
+
+ClusterIp
+NodePort
+LoadBalancer
+ExternalService
+
+=======================
+Deployments:
+kubectl create deployment ngnix-deployment --image=usz17/ngnix:2
+kubectl get pods
+kubectl scale deployment ngnix-deployment --replicas=3
+
+C:\Users\eagle>kubectl get pods
+NAME                               READY   STATUS    RESTARTS   AGE
+ngnix-deployment-8dfd4d7c8-krhtg   1/1     Running   0          64s
+ngnix-deployment-8dfd4d7c8-ms6jn   1/1     Running   0          3s
+ngnix-deployment-8dfd4d7c8-nhwds   1/1     Running   0          3s
+
+C:\Users\eagle>kubectl expose deployment ngnix-deployment --port=87 --target-port=80 --type=NodePort
+service/ngnix-deployment exposed
+
+C:\Users\eagle>kubectl get svc
+NAME               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes         ClusterIP   10.96.0.1       <none>        443/TCP        48m
+ngnix-deployment   NodePort    10.104.189.65   <none>        87:31353/TCP   5m17s
+
+C:\Users\eagle>minikube ip
+192.168.49.2
+
+
+C:\Users\eagle>minikube service ngnix-deployment
+┌───────────┬──────────────────┬─────────────┬───────────────────────────┐
+│ NAMESPACE │       NAME       │ TARGET PORT │            URL            │
+├───────────┼──────────────────┼─────────────┼───────────────────────────┤
+│ default   │ ngnix-deployment │ 87          │ http://192.168.49.2:31353 │
+└───────────┴──────────────────┴─────────────┴───────────────────────────┘
+* Starting tunnel for service ngnix-deployment.
+┌───────────┬──────────────────┬─────────────┬────────────────────────┐
+│ NAMESPACE │       NAME       │ TARGET PORT │          URL           │
+├───────────┼──────────────────┼─────────────┼────────────────────────┤
+│ default   │ ngnix-deployment │             │ http://127.0.0.1:53123 │
+└───────────┴──────────────────┴─────────────┴────────────────────────┘
+* Opening service default/ngnix-deployment in default browser...
+! Because you are using a Docker driver on windows, the terminal needs to be open to run it.
+
+
+====================================================================
+docker build -t pms-app:latest .
+minikube image load pms-app:latest
+kubectl apply -f k8s/
+
+kubectl get pods
+kubectl get svc
+
+minikube service pms-service --url
+
+
+------------------------------------------------------------
+
+Jenkins: Automation Tool
+
+Configuration in jenkins
+
+Credentials:
+
+Jenkins
+git
+docker
+
+
+Tools:
+
+JDK  -- Java17
+        C:\Program Files\Java\jdk-17
+
+
+GIT -- Default
+       C:\Program Files\Git\bin\git.exe 
+
+Maven  --  Maven
+           D:\apache-maven-3.9.14
+
+
+==========================================================
+
+pipeline {
+    agent any 
+    tools{
+	jdk 'Java17'
+        maven 'Maven'
+    }
+    stages {
+        stage('Checkout Code from Github') {
+            steps {
+                echo 'Pull the application from github' 
+                git branch: 'main', credentialsId: 'gitcred', url: 'https://github.com/chntraining/bnptest.git'
+            }
+        }
+
+        stage('Building the Project') {
+            steps {
+                echo 'Build the application ' 
+                bat 'mvn clean package'
+            }
+        }
+
+	stage('Build Docker Image') {
+            steps {
+                echo 'Build the Docker Image for the application ' 
+                bat 'docker build -t pms-app:latest .'
+            }
+        }
+        stage('Start the minikube') {
+            steps {
+		echo 'Deleting Minikube' 
+		bat 'minikube delete'
+                echo 'Starting Minikube' 
+                bat 'minikube start'
+            }
+        }
+        stage('Load the image to Minikube') {
+            steps {
+                echo 'Loading image to minikube ' 
+                bat 'minikube image load pms-app:latest'
+            }
+        }
+
+	stage('Deploy to k8') {
+            steps {
+                echo 'Deploying to K8s' 
+                bat 'kubectl apply -f k8s/'
+
+		echo 'Checking Pods' 
+                bat 'kubectl get pods'
+
+		echo 'Checking Services' 
+                bat 'kubectl get svc'
+            }
+        }
+
+	 stage('Wait for the pods to be ready') {
+            steps {
+                echo 'Waiting for the pods to be ready' 
+                bat 'kubectl wait --for=condition=Ready pods --all  --timeout=120s'
+            }
+         }
+
+	stage('Access the application') {
+            steps {
+                echo 'Accessing Service URL' 
+                bat 'minikube service pms-service --url'
+            }
+         }
+
+    }
+}
+
+
+
+
+
+   
